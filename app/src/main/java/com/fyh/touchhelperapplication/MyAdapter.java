@@ -53,7 +53,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> implem
         holder.ivDrag.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                checkOrClickListener.onViewTouch(v,event);
+                checkOrClickListener.onViewDragStart(event);
                 return false;
             }
         });
@@ -98,14 +98,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> implem
 
     @Override
     public void onItemSelect(RecyclerView.ViewHolder holder) {
-//        holder.itemView.setScaleX(0.8f);
-//        holder.itemView.setScaleY(0.8f);
+        //选中拖动的item 可以做一些 选中效果
     }
 
     @Override
     public void onItemClear(RecyclerView.ViewHolder holder) {
-//        holder.itemView.setScaleX(1.0f);
-//        holder.itemView.setScaleY(1.0f);
+        //拖动结束
+        checkOrClickListener.onViewDragStop();
     }
 
 

@@ -10,11 +10,14 @@ import android.view.View;
  */
 public interface InterfaceOnCheckOrClickListener {
     /**
-     * 触摸事件
-     * @param view
-     * @param even
+     * 点击拖动
      */
-    void onViewTouch(View view,MotionEvent even);
+    void onViewDragStart(MotionEvent event);
+
+    /**
+     * 停止拖动
+     */
+    void onViewDragStop();
 
     /**
      * 点击事件

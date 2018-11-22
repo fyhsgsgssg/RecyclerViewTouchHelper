@@ -64,34 +64,39 @@ public class MainActivity extends AppCompatActivity implements InterfaceOnCheckO
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         callback = new MyItemCallback(myAdapter);
-        callback.setDrag(true);
+        callback.setDrag(false);
         MyItemTouchHelper helper = new MyItemTouchHelper(callback);
         helper.attachToRecyclerView(recyclerView);
         gestureListener= new MyGestureListener(helper);
         gestureListener.setDoDrag(false);
     }
 
+    /**
+     * 允许拖动
+     */
     @Override
-    public void onViewTouch(View view, MotionEvent even) {
-        switch (even.getAction()) {
+    public void onViewDragStart(MotionEvent event) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (null != gestureListener) {
-                    gestureListener.setDoDrag(true);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                if (null != gestureListener) {
-                    gestureListener.setDoDrag(false);
-                }
-                break;
-            default:
-                if (null != gestureListener) {
-                    gestureListener.setDoDrag(false);
-                }
-                break;
-
+            if (null != gestureListener && null != callback) {
+                callback.setDrag(true);
+                gestureListener.setDoDrag(true);
+            }
+            break;
         }
 
+
+    }
+
+    /**
+     * 关闭拖动
+     */
+    @Override
+    public void onViewDragStop() {
+        if (null != gestureListener&&null!=callback) {
+            callback.setDrag(false);
+            gestureListener.setDoDrag(false);
+        }
     }
 
     @Override
