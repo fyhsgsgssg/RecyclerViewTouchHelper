@@ -104,6 +104,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> implem
     @Override
     public void onItemClear(RecyclerView.ViewHolder holder) {
         //拖动结束
+        notifyDataSetChanged();
         checkOrClickListener.onViewDragStop();
     }
 

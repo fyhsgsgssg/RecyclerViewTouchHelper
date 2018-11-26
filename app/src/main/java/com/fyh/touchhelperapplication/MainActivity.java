@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceOnCheckO
     private MyAdapter myAdapter;
     private MyGestureListener gestureListener ;
     private boolean isChooseAll;
+    private int checkedItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +56,28 @@ public class MainActivity extends AppCompatActivity implements InterfaceOnCheckO
         });
 
         btnDelete = (TextView)findViewById(R.id.tv_delete);
-
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null!=myAdapter&&checkedItem>0){
+                    datas=myAdapter.getData();
+                    if (null!=datas) {
+                        //新建一个数组对象存放已经选中的对象
+                        List<KeyValueBean> checkedList = new ArrayList<>();
+                        for (int i = 0; i < datas.size(); i++) {
+                            if (datas.get(i).getChecked()){
+                                checkedList.add(datas.get(i));
+                            }
+                        }
+                        //将整个数组移除
+                        datas.removeAll(checkedList);
+                        //更新下界面展示
+                        updataUI();
+                        myAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         myAdapter = new MyAdapter(MainActivity.this,datas);
         myAdapter.setCheckOrClickListener(this);
@@ -114,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceOnCheckO
         setItemChecked(position,!myAdapter.getData().get(position).getChecked());
         updataUI();
         myAdapter.notifyDataSetChanged();
+
     }
 
     /**
@@ -129,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceOnCheckO
      * 更新选中的条数
      */
     private void updataUI(){
-        int checkedItem = 0;
+        checkedItem = 0;
         for (int i = 0; i <datas.size() ; i++) {
             if (datas.get(i).getChecked()){
                 checkedItem++;
@@ -138,9 +161,18 @@ public class MainActivity extends AppCompatActivity implements InterfaceOnCheckO
         if (checkedItem>0) {
             btnDelete.setText("刪除("+checkedItem+")");
             btnDelete.setTextColor(getResources().getColor(R.color.colorPrimary));
+
         }else{
             btnDelete.setText("刪除");
             btnDelete.setTextColor(getResources().getColor(R.color.gray));
+
+        }
+        if (checkedItem==datas.size()){
+            isChooseAll=true;
+            btnAll.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }else{
+            isChooseAll=false;
+            btnAll.setTextColor(getResources().getColor(R.color.gray));
         }
     }
 
@@ -150,23 +182,15 @@ public class MainActivity extends AppCompatActivity implements InterfaceOnCheckO
     private void chooseAll(){
         if (null!=myAdapter) {
             datas=myAdapter.getData();
-            for (int i = 0; i <datas.size(); i++) {
-                datas.get(i).setChecked(!isChooseAll);
-            }
-
-            if (!isChooseAll){
-                btnDelete.setText("刪除("+datas.size()+")");
-                btnDelete.setTextColor(getResources().getColor(R.color.colorPrimary));
-                btnAll.setTextColor(getResources().getColor(R.color.colorPrimary));
-            }else{
-                btnDelete.setText("刪除");
-                btnDelete.setTextColor(getResources().getColor(R.color.gray));
-                btnAll.setTextColor(getResources().getColor(R.color.gray));
+            if (!datas.isEmpty()) {
+                for (int i = 0; i < datas.size(); i++) {
+                    datas.get(i).setChecked(!isChooseAll);
+                }
+                isChooseAll = !isChooseAll;
+                updataUI();
+                myAdapter.notifyDataSetChanged();
 
             }
-
-            isChooseAll=!isChooseAll;
-            myAdapter.notifyDataSetChanged();
         }
     }
 
